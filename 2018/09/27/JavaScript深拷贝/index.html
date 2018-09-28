@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="js,基础问题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JavaScript深拷贝1、JavaScript数据类型​    JavaScript数据类型分为两类：基本数据类型（也被称为原始类型 primitive type）和对象类型（也被称为引用数据类型 object type）  其中基本数据类型包括：null、boolean、undefined、string、number、symbol 引用数据类型包括：Array、Object、Function">
+<meta name="keywords" content="js,基础问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript深拷贝探究">
+<meta property="og:url" content="http://yoursite.com/2018/09/27/JavaScript深拷贝/index.html">
+<meta property="og:site_name" content="Live up">
+<meta property="og:description" content="JavaScript深拷贝1、JavaScript数据类型​    JavaScript数据类型分为两类：基本数据类型（也被称为原始类型 primitive type）和对象类型（也被称为引用数据类型 object type）  其中基本数据类型包括：null、boolean、undefined、string、number、symbol 引用数据类型包括：Array、Object、Function">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://wxh-img-1256164887.cos.ap-beijing.myqcloud.com/%E5%86%85%E5%AD%98%E7%A4%BA%E4%BE%8B-20180928.jpg">
+<meta property="og:updated_time" content="2018-09-28T14:06:18.404Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript深拷贝探究">
+<meta name="twitter:description" content="JavaScript深拷贝1、JavaScript数据类型​    JavaScript数据类型分为两类：基本数据类型（也被称为原始类型 primitive type）和对象类型（也被称为引用数据类型 object type）  其中基本数据类型包括：null、boolean、undefined、string、number、symbol 引用数据类型包括：Array、Object、Function">
+<meta name="twitter:image" content="https://wxh-img-1256164887.cos.ap-beijing.myqcloud.com/%E5%86%85%E5%AD%98%E7%A4%BA%E4%BE%8B-20180928.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/27/JavaScript深拷贝/"/>
+
+
+
+
+
+  <title>JavaScript深拷贝探究 | Live up</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Live up</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/27/JavaScript深拷贝/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Michael Dean">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/wxh.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Live up">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaScript深拷贝探究</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-27T12:34:45+08:00">
+                2018-09-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="JavaScript深拷贝"><a href="#JavaScript深拷贝" class="headerlink" title="JavaScript深拷贝"></a>JavaScript深拷贝</h2><h4 id="1、JavaScript数据类型"><a href="#1、JavaScript数据类型" class="headerlink" title="1、JavaScript数据类型"></a>1、<strong>JavaScript数据类型</strong></h4><p>​    JavaScript数据类型分为两类：基本数据类型（也被称为原始类型 primitive type）和对象类型（也被称为引用数据类型 object type）</p>
+<ul>
+<li>其中基本数据类型包括：null、boolean、undefined、string、number、symbol</li>
+<li>引用数据类型包括：Array、Object、Function、Date等</li>
+</ul>
+<a id="more"></a>
+<h4 id="2、javascript的变量的存储方式–栈（stack）和堆（heap）"><a href="#2、javascript的变量的存储方式–栈（stack）和堆（heap）" class="headerlink" title="2、javascript的变量的存储方式–栈（stack）和堆（heap）"></a>2、javascript的变量的存储方式–栈（stack）和堆（heap）</h4><ul>
+<li>栈（stack）：自动分配内存空间，系统自动释放，里面存放的是基本类型的值和引用类型的地址</li>
+<li>堆（heap）：动态分配的内存，大小不定，也不会自动释放。里面存放引用类型的值。</li>
+</ul>
+<p><img src="https://wxh-img-1256164887.cos.ap-beijing.myqcloud.com/%E5%86%85%E5%AD%98%E7%A4%BA%E4%BE%8B-20180928.jpg" alt="堆栈示例"></p>
+<p>​    </p>
+<h4 id="3、javascript值传递与址传递"><a href="#3、javascript值传递与址传递" class="headerlink" title="3、javascript值传递与址传递"></a>3、<strong>javascript值传递与址传递</strong></h4><p>​    基本类型与引用类型最大的区别实际就是传值与传址的区别 </p>
+<blockquote>
+<p>​    值传递：基本类型采用的是值传递。 </p>
+<p>​    址传递：引用类型则是地址传递，将存放在栈内存中的地址赋值给接收的变量。 </p>
+</blockquote>
+<p>​    </p>
+<h4 id="4、深拷贝与浅拷贝"><a href="#4、深拷贝与浅拷贝" class="headerlink" title="4、深拷贝与浅拷贝"></a>4、<strong>深拷贝与浅拷贝</strong></h4><ul>
+<li><strong>浅拷贝</strong>：浅拷贝是拷贝引用，拷贝后的引用都是指向同一个对象的实例，彼此之间的操作会互相影响</li>
+<li><strong>深拷贝</strong>：在堆中重新分配内存，并且把源对象<em>所有属性</em>都进行新建拷贝，以保证深拷贝的对象的引用图不包含任何原有对象或对象图上的任何对象，拷贝后的对象与原来的对象是完全隔离，互不影响</li>
+</ul>
+<h4 id="5、JavaScript中实现一个深拷贝"><a href="#5、JavaScript中实现一个深拷贝" class="headerlink" title="5、JavaScript中实现一个深拷贝"></a>5、<strong>JavaScript中实现一个深拷贝</strong></h4><ul>
+<li><p><strong>第一种方法：使用JSON解析解决</strong></p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &#123;</span><br><span class="line">    x:<span class="number">1</span>,</span><br><span class="line">    y:[<span class="number">1</span>,<span class="number">2</span>,<span class="number">4</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> b = <span class="built_in">JSON</span>.parse(<span class="built_in">JSON</span>.stringify(a));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>第二种方法：使用递归解析解决</strong></p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">js中遍历一个对象的属性的方法:</span><br><span class="line"><span class="built_in">Object</span>.keys() 仅仅返回自身的可枚举属性，不包括继承来的，更不包括<span class="built_in">Symbol</span>属性</span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertyNames() 返回自身的可枚举和不可枚举属性。但是不包括<span class="built_in">Symbol</span>属性</span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertySymbols() 返回自身的Symol属性</span><br><span class="line"><span class="keyword">for</span>...in 可以遍历对象的自身的和继承的可枚举属性，不包含<span class="built_in">Symbol</span>属性</span><br><span class="line"><span class="built_in">Reflect</span>.ownkeys() 返回对象自身的所有属性，不管是否可枚举，也不管是否是<span class="built_in">Symbol</span>。注意不包括继承的属性</span><br></pre></td></tr></table></figure>
+<p>   经过查阅资料，自己整理思考之后，初步编写了一个简单的深拷贝函数：</p>
+   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span> (<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 如果是简单数据类型则直接返回数据</span></span><br><span class="line">    <span class="keyword">if</span> (isPrimitive(obj)) &#123;</span><br><span class="line">        <span class="keyword">return</span> obj</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 判断拷贝对象是否是数组</span></span><br><span class="line">    <span class="keyword">let</span> newObj = <span class="built_in">Array</span>.isArray(obj) ? [] : &#123;&#125;;</span><br><span class="line">    <span class="comment">// 使用Reflect.ownKeys可以获取包括Symbol属性的所有属性的数组</span></span><br><span class="line">    <span class="built_in">Reflect</span>.ownKeys(obj).forEach(<span class="function"><span class="params">i</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> obj[i] === <span class="string">'object'</span>) &#123;</span><br><span class="line">             <span class="comment">// 递归处理</span></span><br><span class="line">             newObj[i] = deepClone(obj[i]);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 简单处理 Function的情况</span></span><br><span class="line">            newObj[i] = obj[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> newObj;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">isPrimitive</span>(<span class="params">value</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">typeof</span> value === <span class="string">'string'</span> || </span><br><span class="line">    <span class="keyword">typeof</span> value === <span class="string">'number'</span> || </span><br><span class="line">    <span class="keyword">typeof</span> value === <span class="string">'symbol'</span> ||</span><br><span class="line">    <span class="keyword">typeof</span> value === <span class="string">'boolean'</span>||</span><br><span class="line">    <span class="keyword">typeof</span> value === <span class="string">'undefined'</span> ||</span><br><span class="line">    value === <span class="literal">null</span>)</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  经过测试该方法可以处理常见的大多数的深拷贝问题（obj可以是嵌套的复杂json对象，包括Array，Object、Function、Symbol）</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s1 = <span class="built_in">Symbol</span>(<span class="string">"first"</span>);</span><br><span class="line"><span class="keyword">let</span> xm = &#123;</span><br><span class="line">    name: <span class="string">'小明'</span>,</span><br><span class="line">    age:<span class="number">18</span>,</span><br><span class="line">    lessons:[<span class="string">'数学'</span>,<span class="string">'语文'</span>,<span class="string">'英语'</span>],</span><br><span class="line">    brothers:[&#123;</span><br><span class="line">        name:<span class="string">"大明"</span>,</span><br><span class="line">        age:<span class="number">19</span></span><br><span class="line">    &#125;,&#123;</span><br><span class="line">        name:<span class="string">"小小明"</span>,</span><br><span class="line">        age:<span class="number">17</span></span><br><span class="line">    &#125;],</span><br><span class="line">    girlFriends:<span class="literal">null</span>,</span><br><span class="line">    son:<span class="literal">undefined</span>,</span><br><span class="line">    money: <span class="literal">NaN</span>,</span><br><span class="line">    arr: <span class="keyword">new</span> <span class="built_in">Object</span>(&#123;<span class="attr">a</span>:<span class="number">1</span>&#125;),</span><br><span class="line">    [s1]:<span class="string">'test'</span>,</span><br><span class="line">    say: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'-----1-----'</span>,)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(deepClone(xm))	<span class="comment">// 结果正确！</span></span><br></pre></td></tr></table></figure>
+<p>  但是在测试以及学习其他优秀的库（ <a href="https://github.com/lodash/lodash" target="_blank" rel="noopener">lodash</a> ）是如何实现深拷贝的过程中也发现了一些问题。针对目前自己编写的这个深拷贝函数，</p>
+<p>  1、对于JavaScript其他内置数据类型的支持不够。比如Date、Set、ArrayBuffer等，<strong>lodash</strong>使用Object.prototype.toString.call()方法处理了几乎所有的数据类型。如下：</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** `Object#toString` result references. */</span></span><br><span class="line"><span class="keyword">var</span> argsTag = <span class="string">'[object Arguments]'</span>,</span><br><span class="line">    arrayTag = <span class="string">'[object Array]'</span>,</span><br><span class="line">    boolTag = <span class="string">'[object Boolean]'</span>,</span><br><span class="line">    dateTag = <span class="string">'[object Date]'</span>,</span><br><span class="line">    errorTag = <span class="string">'[object Error]'</span>,</span><br><span class="line">    funcTag = <span class="string">'[object Function]'</span>,</span><br><span class="line">    genTag = <span class="string">'[object GeneratorFunction]'</span>,</span><br><span class="line">    mapTag = <span class="string">'[object Map]'</span>,</span><br><span class="line">    numberTag = <span class="string">'[object Number]'</span>,</span><br><span class="line">    objectTag = <span class="string">'[object Object]'</span>,</span><br><span class="line">    regexpTag = <span class="string">'[object RegExp]'</span>,</span><br><span class="line">    setTag = <span class="string">'[object Set]'</span>,</span><br><span class="line">    stringTag = <span class="string">'[object String]'</span>,</span><br><span class="line">    symbolTag = <span class="string">'[object Symbol]'</span>,</span><br><span class="line">    weakMapTag = <span class="string">'[object WeakMap]'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> arrayBufferTag = <span class="string">'[object ArrayBuffer]'</span>,</span><br><span class="line">    dataViewTag = <span class="string">'[object DataView]'</span>,</span><br><span class="line">    float32Tag = <span class="string">'[object Float32Array]'</span>,</span><br><span class="line">    float64Tag = <span class="string">'[object Float64Array]'</span>,</span><br><span class="line">    int8Tag = <span class="string">'[object Int8Array]'</span>,</span><br><span class="line">    int16Tag = <span class="string">'[object Int16Array]'</span>,</span><br><span class="line">    int32Tag = <span class="string">'[object Int32Array]'</span>,</span><br><span class="line">    uint8Tag = <span class="string">'[object Uint8Array]'</span>,</span><br><span class="line">    uint8ClampedTag = <span class="string">'[object Uint8ClampedArray]'</span>,</span><br><span class="line">    uint16Tag = <span class="string">'[object Uint16Array]'</span>,</span><br><span class="line">    uint32Tag = <span class="string">'[object Uint32Array]'</span>;</span><br></pre></td></tr></table></figure>
+<p>  需要完善这个问题就是一个精细的活儿了，之后有时间想折腾了会考虑参照lodash的处理方式，使用更精确的类型判断方法来修改这个深拷贝的函数。当然在生产环境中还是推荐大家使用lodash这种成熟的库好（^-^)。</p>
+<p>  2、对于循环引用的问题没有处理，遇见循环应用的问题时会内存溢出、爆栈。</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = &#123;&#125;;</span><br><span class="line"><span class="keyword">let</span> b = &#123;a&#125;;</span><br><span class="line">a.b = b;</span><br><span class="line"><span class="built_in">console</span>.log(deepClone2(a)) <span class="comment">// RangeError: Maximum call stack size exceeded</span></span><br></pre></td></tr></table></figure>
+<p>  其中lodash使用了一个stack来解决了这个问题</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Check for circular references and return its corresponding clone.</span></span><br><span class="line">  stack || (stack = <span class="keyword">new</span> Stack);</span><br><span class="line">  <span class="keyword">var</span> stacked = stack.get(value);</span><br><span class="line">  <span class="keyword">if</span> (stacked) &#123;</span><br><span class="line">    <span class="keyword">return</span> stacked;</span><br><span class="line">  &#125;</span><br><span class="line">  stack.set(value, result);</span><br></pre></td></tr></table></figure>
+<p>  我们也可以使用类似的思想来解决循环引用的问题。</p>
+   <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span> (<span class="params">obj</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> stack = &#123;&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">baseClone</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (isPrimitive(obj)) &#123;</span><br><span class="line">            <span class="keyword">return</span> obj;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">let</span> newObj = <span class="built_in">Array</span>.isArray(obj) ? [] : &#123;&#125;;</span><br><span class="line">        <span class="built_in">Reflect</span>.ownKeys(obj).forEach(<span class="function"><span class="params">i</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">typeof</span> obj[i] === <span class="string">'object'</span>) &#123;</span><br><span class="line">                <span class="comment">// 增加了记录被拷贝过的引用地址。以此来解决循环引用的问题</span></span><br><span class="line">                <span class="keyword">if</span> (stack[obj[i]]) &#123;</span><br><span class="line">                    newObj[i] = stack[obj[i]]</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    stack[obj[i]] = obj[i];</span><br><span class="line">                    newObj[i] = baseClone(obj[i]);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                newObj[i] = obj[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="keyword">return</span> newObj;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> baseClone(obj)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>参考</p>
+<p>  <a href="https://www.zhihu.com/question/23031215/answer/460652947" target="_blank" rel="noopener">javascript中的深拷贝和浅拷贝？</a></p>
+<p>  <a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript" target="_blank" rel="noopener">JavaScript|MDN</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag"># js</a>
+          
+            <a href="/tags/基础问题/" rel="tag"># 基础问题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/26/JavaScript类型问题/" rel="next" title="JavaScript类型问题">
+                <i class="fa fa-chevron-left"></i> JavaScript类型问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/wxh.jpg"
+                alt="Michael Dean" />
+            
+              <p class="site-author-name" itemprop="name">Michael Dean</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript深拷贝"><span class="nav-number">1.</span> <span class="nav-text">JavaScript深拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、JavaScript数据类型"><span class="nav-number">1.0.1.</span> <span class="nav-text">1、JavaScript数据类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、javascript的变量的存储方式–栈（stack）和堆（heap）"><span class="nav-number">1.0.2.</span> <span class="nav-text">2、javascript的变量的存储方式–栈（stack）和堆（heap）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、javascript值传递与址传递"><span class="nav-number">1.0.3.</span> <span class="nav-text">3、javascript值传递与址传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、深拷贝与浅拷贝"><span class="nav-number">1.0.4.</span> <span class="nav-text">4、深拷贝与浅拷贝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5、JavaScript中实现一个深拷贝"><span class="nav-number">1.0.5.</span> <span class="nav-text">5、JavaScript中实现一个深拷贝</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Michael Dean</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

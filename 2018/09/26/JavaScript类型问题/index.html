@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="js,基础问题," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JavaScript类型问题​    JavaScript 类型的问题其实是个挺折磨人的话题, 不然也不会有 TypeScript 出现了。此篇博文主要记录与此相关的一些问题。有兴趣研究的同学可以去阅读 lodash 的源代码，学习在这种成熟的JS库中是如何处理类型问题以及如何进行类型判断的。">
+<meta name="keywords" content="js,基础问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript类型问题">
+<meta property="og:url" content="http://yoursite.com/2018/09/26/JavaScript类型问题/index.html">
+<meta property="og:site_name" content="Live up">
+<meta property="og:description" content="JavaScript类型问题​    JavaScript 类型的问题其实是个挺折磨人的话题, 不然也不会有 TypeScript 出现了。此篇博文主要记录与此相关的一些问题。有兴趣研究的同学可以去阅读 lodash 的源代码，学习在这种成熟的JS库中是如何处理类型问题以及如何进行类型判断的。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-28T14:00:40.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JavaScript类型问题">
+<meta name="twitter:description" content="JavaScript类型问题​    JavaScript 类型的问题其实是个挺折磨人的话题, 不然也不会有 TypeScript 出现了。此篇博文主要记录与此相关的一些问题。有兴趣研究的同学可以去阅读 lodash 的源代码，学习在这种成熟的JS库中是如何处理类型问题以及如何进行类型判断的。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/26/JavaScript类型问题/"/>
+
+
+
+
+
+  <title>JavaScript类型问题 | Live up</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Live up</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/26/JavaScript类型问题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Michael Dean">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/wxh.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Live up">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JavaScript类型问题</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-26T15:34:45+08:00">
+                2018-09-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/javascript/" itemprop="url" rel="index">
+                    <span itemprop="name">javascript</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="JavaScript类型问题"><a href="#JavaScript类型问题" class="headerlink" title="JavaScript类型问题"></a>JavaScript类型问题</h1><p>​    JavaScript 类型的问题其实是个挺折磨人的话题, 不然也不会有 TypeScript 出现了。此篇博文主要记录与此相关的一些问题。有兴趣研究的同学可以去阅读 <a href="https://github.com/lodash/lodash" target="_blank" rel="noopener">lodash</a> 的源代码，学习在这种成熟的JS库中是如何处理类型问题以及如何进行类型判断的。</p>
+<a id="more"></a>
+<h3 id="JavaScript内置类型"><a href="#JavaScript内置类型" class="headerlink" title="JavaScript内置类型"></a>JavaScript内置类型</h3><pre><code>* null
+
+* undefined
+
+* boolean
+
+* number
+
+* string
+
+* object
+
+* symbol (ES6中新增类型)
+</code></pre><p>​    </p>
+<p>   除了object之外，其他统称为基本数据类型。object类型则包括Object 、Array 、Function 、Date等，我们一般也把它们称为引用数据类型。</p>
+<blockquote>
+<p>基本数据类型的值存放在栈（Stack）中，而引用数据类型的值存放在堆（Heap）中，栈中只存放对它们的“引用”</p>
+</blockquote>
+<h3 id="JavaScript常见的一些类型问题"><a href="#JavaScript常见的一些类型问题" class="headerlink" title="JavaScript常见的一些类型问题"></a>JavaScript常见的一些类型问题</h3><h4 id="1、-和-问题"><a href="#1、-和-问题" class="headerlink" title="1、== 和 ===问题"></a>1、== 和 ===问题</h4><ul>
+<li><p>相等（==）</p>
+<blockquote>
+<p>比较操作符会为两个不同类型的操作数转换类型，然后进行严格比较。当两个操作数都是对象时，JavaScript会比较其内部引用，当且仅当他们的引用指向内存中的相同对象（区域）时才相等，即他们在栈内存中的引用地址相同。 </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span>   ==  <span class="number">1</span>     <span class="comment">// true</span></span><br><span class="line"><span class="string">"1"</span>  ==  <span class="number">1</span>     <span class="comment">// true</span></span><br><span class="line"> <span class="number">1</span>   == <span class="string">'1'</span>    <span class="comment">// true</span></span><br><span class="line"> <span class="number">0</span>   == <span class="literal">false</span>  <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><p>严格相等（===）</p>
+<blockquote>
+<p>一致运算符不会进行类型转换，仅当操作数严格相等时返回true     </p>
+</blockquote>
+ <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">3</span> === <span class="number">3</span>   <span class="comment">// true</span></span><br><span class="line"><span class="number">3</span> === <span class="string">'3'</span> <span class="comment">// false</span></span><br><span class="line"><span class="keyword">var</span> object1 = &#123;<span class="string">"value"</span>:<span class="string">"key"</span>&#125;, object2=&#123;<span class="string">"value"</span>:<span class="string">"key"</span>&#125;;</span><br><span class="line">object1 === object2 <span class="comment">//false</span></span><br><span class="line"><span class="literal">undefined</span> == <span class="literal">null</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<pre><code>可以很明显的看出，== 和===的区别就在于在判断的时候是否进行了自动的**类型转换**。需要注意的是ECMAScript认为undefined是从null派生出来的，所以把它们定义为相等的 。
+</code></pre></li>
+</ul>
+<h4 id="2、如何判断JavaScript中变量的类型"><a href="#2、如何判断JavaScript中变量的类型" class="headerlink" title="2、如何判断JavaScript中变量的类型"></a>2、如何判断JavaScript中变量的类型</h4><ul>
+<li><p>typeof</p>
+<blockquote>
+<p>主要用于判断数据是不是<strong>基本数据类型</strong>：<strong>String、Number、Object、Null、Undefined</strong>，但是无法判断出function（有些浏览器会出错，V8中能正常判断 ）、array、regExp </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="string">''</span>);<span class="comment">//string</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> []);<span class="comment">//object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> &#123;&#125;);<span class="comment">//object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="number">1</span>);<span class="comment">//number</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">null</span>);<span class="comment">//object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">undefined</span>);<span class="comment">//undefined</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="literal">true</span>);<span class="comment">//boolean</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;);<span class="comment">//function</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> /\d/);<span class="comment">//object</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>instanceof </p>
+<blockquote>
+<p>instanceof 左操作数是一个类，右操作数是标识对象的类。如果左侧的对象是右侧类的实例，则返回true.而js中对象的类是通过初始化它们的构造函数来定义的。即instanceof的右操作数应当是一个函数。所有的对象都是object的实例。如果左操作数不是对象，则返回false,如果右操作数不是函数，则抛出typeError。 </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">'foo'</span>) <span class="keyword">instanceof</span> <span class="built_in">String</span>; <span class="comment">// true</span></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">'foo'</span>) <span class="keyword">instanceof</span> <span class="built_in">Object</span>; <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line"><span class="string">'foo'</span> <span class="keyword">instanceof</span> <span class="built_in">String</span>; <span class="comment">// false</span></span><br><span class="line"><span class="string">'foo'</span> <span class="keyword">instanceof</span> <span class="built_in">Object</span>; <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Object.prototype.toString.call()</p>
+<blockquote>
+<p>这是对象的一个原生原型扩展函数，用来<strong>精确的区分数据类型</strong> </p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> toString = <span class="built_in">Object</span>.prototype.toString;</span><br><span class="line"></span><br><span class="line">toString.call(<span class="keyword">new</span> <span class="built_in">Date</span>); <span class="comment">// [object Date]</span></span><br><span class="line">toString.call(<span class="keyword">new</span> <span class="built_in">String</span>); <span class="comment">// [object String]</span></span><br><span class="line">toString.call(<span class="built_in">Math</span>); <span class="comment">// [object Math]</span></span><br><span class="line">toString.call(<span class="literal">undefined</span>); <span class="comment">// [object Undefined]</span></span><br><span class="line">toString.call(<span class="literal">null</span>); <span class="comment">// [object Null]</span></span><br></pre></td></tr></table></figure>
+<pre><code>上述的3种类型判断方式都有各有利弊，typeof验证**基本数据类型**（除了null哦） 一般不会有什么问题，但是验证引用数据类型，则会出现各种谬误。instanceof用来验证一个对象是否是一个类的实例，但是由于JavaScript中所有引用数据类型都是继承自Object，所以没法判断对象的准确类型。Object.prototype.toString.call()虽然可以精确判断数据类型，但是在面对自定义的类型时也存在风险。（想一下，如果我重写了Array的toString方法）
+</code></pre></li>
+</ul>
+<h4 id="3、基本数据类型以及引用数据类型的问题（值传递与引用传递）"><a href="#3、基本数据类型以及引用数据类型的问题（值传递与引用传递）" class="headerlink" title="3、基本数据类型以及引用数据类型的问题（值传递与引用传递）"></a>3、基本数据类型以及引用数据类型的问题（值传递与引用传递）</h4><pre><code>&gt; js 中什么类型是引用传递, 什么类型是值传递? 如何将值类型的变量以引用的方式传递? 
+</code></pre><p>​    简单点说, 对象是引用传递, 基础类型是值传递, 通过将基础类型包装 (boxing) 可以以引用的方式传递 。例如 <code>a = new Number(1)</code> 这时候<strong>a</strong> 就可以使用引用的方式传递了</p>
+<p>​    这地方有一个有意思的小问题。用更严谨的技术说法，在JavaScript中没有所谓的引用传递而是传递引用，也叫作<strong>call-by sharing</strong> 。想要了解的同学可以看看Stack Overflow上的这个讨论<a href="http://stackoverflow.com/questions/518000/is-javascript-a-pass-by-reference-or-pass-by-value-language" target="_blank" rel="noopener">Is JavaScript a pass-by-reference or pass-by-value language?</a></p>
+<blockquote>
+<p>调用函数传参时，函数接受对象实参引用的副本(既不是按值传递的对象副本，也不是按引用传递的隐式引用)。 它和按引用传递的不同在于：在共享传递中对函数形参的赋值，不会影响实参的值。 然而，虽然引用是副本，引用的对象是相同的。它们共享相同的对象，所以修改形参对象的属性值，也会影响到实参的属性值。 </p>
+<p>换句话来说</p>
+<pre><code>值传递：传内存拷贝
+</code></pre><p>​    引用传递：传内存指针</p>
+<p>​    共享传递（call-by sharing）:传内存指针的拷贝</p>
+</blockquote>
+<h4 id="4、JavaScript中值为false的值"><a href="#4、JavaScript中值为false的值" class="headerlink" title="4、JavaScript中值为false的值"></a>4、JavaScript中值为false的值</h4><ul>
+<li>null</li>
+<li>undefined</li>
+<li>“” (空字符串)</li>
+<li>NaN</li>
+<li>0</li>
+<li>false</li>
+</ul>
+<p>​    </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/js/" rel="tag"># js</a>
+          
+            <a href="/tags/基础问题/" rel="tag"># 基础问题</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/09/27/JavaScript深拷贝/" rel="prev" title="JavaScript深拷贝探究">
+                JavaScript深拷贝探究 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/wxh.jpg"
+                alt="Michael Dean" />
+            
+              <p class="site-author-name" itemprop="name">Michael Dean</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#JavaScript类型问题"><span class="nav-number">1.</span> <span class="nav-text">JavaScript类型问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript内置类型"><span class="nav-number">1.0.1.</span> <span class="nav-text">JavaScript内置类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript常见的一些类型问题"><span class="nav-number">1.0.2.</span> <span class="nav-text">JavaScript常见的一些类型问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、-和-问题"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">1、== 和 ===问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、如何判断JavaScript中变量的类型"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">2、如何判断JavaScript中变量的类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、基本数据类型以及引用数据类型的问题（值传递与引用传递）"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">3、基本数据类型以及引用数据类型的问题（值传递与引用传递）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4、JavaScript中值为false的值"><span class="nav-number">1.0.2.4.</span> <span class="nav-text">4、JavaScript中值为false的值</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Michael Dean</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
